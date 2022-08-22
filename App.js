@@ -1,114 +1,73 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import { withAuthenticator } from 'aws-amplify-react-native';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import AddProductScreen from './src/screens/add-product-screen';
+import HomeScreen from './src/screens/home-screen';
+import {Button} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {withAuthenticator} from 'aws-amplify-react-native';
+import {Auth} from 'aws-amplify';
 
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const Section = ({children, title})  => {
-  const isDarkMode = useColorScheme() === 'dark';
+const App: () => React$Node = () => {
+  const Stack = createStackNavigator();
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={({navigation}) => ({
+              title: 'Home',
+              headerStyle: {
+                backgroundColor: '#ff9300',
+                
+              },
+              headerTintColor: '#fff',
+              headerLeft:()=>(
+                
+                <TouchableOpacity
+                style={styles.logOutBtn}
+                onPress={() => {Auth.signOut()}}>
+                <Icon name={'sign-out'} size={20} color="#ffff" />
+
+                </TouchableOpacity>
+                
+                
+              ),
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.addButton}
+                  onPress={() => navigation.navigate('AddProduct')}>
+                  <Icon name={'plus'} size={20} color="#ffff" />
+                </TouchableOpacity>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="AddProduct"
+            buttonStyle={styles.addButton}
+            component={AddProductScreen}
+            options={{
+              title: 'Add Product',
+              headerStyle: {
+                backgroundColor: '#ff9300',
+              },
+              headerTintColor: '#fff',
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 };
-
-
-
-const App  = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  addButton: {
+    marginRight: 20,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  logOutBtn: {
+    marginLeft: 10,
   },
 });
 
